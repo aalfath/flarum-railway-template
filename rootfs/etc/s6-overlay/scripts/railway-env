@@ -20,7 +20,7 @@ setenv FLARUM_BASE_URL "${FLARUM_BASE_URL%/}"
 [ -n "${FLARUM_ADMIN_EMAIL:-}" ] || setenv FLARUM_ADMIN_EMAIL "admin@${domain:-example.com}"
 [ -n "${FLARUM_FORUM_TITLE:-}" ] || setenv FLARUM_FORUM_TITLE "Flarum"
 
-if [ "${SIDECAR_CRON:-0}" != "1" ] && [ "${#FLARUM_ADMIN_PASSWORD}" -lt 8 ]; then
+if [ "${SIDECAR_CRON:-0}" != "1" ] && pw="${FLARUM_ADMIN_PASSWORD:-}" && [ "${#pw}" -lt 8 ]; then
   echo >&2 "ERROR: FLARUM_ADMIN_PASSWORD must be set (at least 8 characters)"
   exit 1
 fi
