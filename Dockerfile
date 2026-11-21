@@ -27,6 +27,6 @@ ENV PORT=8000 \
     UPLOAD_MAX_SIZE=32M \
     NGINX_WORKER_PROCESSES=2
 
+# Data lives on a Railway volume mounted at /data (the base image declares it too).
 EXPOSE 8000
-VOLUME [ "/data" ]
 ENTRYPOINT [ "/init" ]
