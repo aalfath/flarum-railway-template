@@ -1,0 +1,6 @@
+#!/command/with-contenv sh
+# After the image's "config" step: listen on Railway's PORT and schedule Flarum's tasks in this container.
+set -eu
+port="${PORT:-8000}"
+sed -i -e "s/listen 8000;/listen ${port};/" -e "s/listen \[::\]:8000;/listen [::]:${port};/" /etc/nginx/nginx.conf
+SIDECAR_CRON=1 /etc/s6-overlay/scripts/config-cron

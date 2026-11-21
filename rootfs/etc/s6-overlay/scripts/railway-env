@@ -1,0 +1,27 @@
+#!/command/with-contenv bash
+# Railway defaults for the Flarum image (runs before the image's own "config" step).
+# Values are written to s6's container environment so every later step sees them.
+set -euo pipefail
+envdir=/run/s6/container_environment
+
+setenv() { printf '%s' "$2" > "${envdir}/$1"; export "$1=$2"; }
+
+domain="${RAILWAY_PUBLIC_DOMAIN:-}"
+if [ -z "${FLARUM_BASE_URL:-}" ]; then
+  if [ -z "$domain" ]; then
+    echo >&2 "ERROR: set FLARUM_BASE_URL (or give the service a Railway domain)"
+    exit 1
+  fi
+  setenv FLARUM_BASE_URL "https://${domain}"
+fi
+setenv FLARUM_BASE_URL "${FLARUM_BASE_URL%/}"
+
+[ -n "${FLARUM_ADMIN_USER:-}" ] || setenv FLARUM_ADMIN_USER admin
+[ -n "${FLARUM_ADMIN_EMAIL:-}" ] || setenv FLARUM_ADMIN_EMAIL "admin@${domain:-example.com}"
+[ -n "${FLARUM_FORUM_TITLE:-}" ] || setenv FLARUM_FORUM_TITLE "Flarum"
+
+if [ "${SIDECAR_CRON:-0}" != "1" ] && [ "${#FLARUM_ADMIN_PASSWORD}" -lt 8 ]; then
+  echo >&2 "ERROR: FLARUM_ADMIN_PASSWORD must be set (at least 8 characters)"
+  exit 1
+fi
+echo "Railway: base URL ${FLARUM_BASE_URL}, admin user ${FLARUM_ADMIN_USER}, listening on ${PORT:-8000}"
