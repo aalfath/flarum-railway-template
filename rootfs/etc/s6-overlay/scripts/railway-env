@@ -17,7 +17,9 @@ fi
 setenv FLARUM_BASE_URL "${FLARUM_BASE_URL%/}"
 
 [ -n "${FLARUM_ADMIN_USER:-}" ] || setenv FLARUM_ADMIN_USER admin
-[ -n "${FLARUM_ADMIN_EMAIL:-}" ] || setenv FLARUM_ADMIN_EMAIL "admin@${domain:-example.com}"
+host="${domain%%:*}"
+case "$host" in *.*) ;; *) host=example.com ;; esac
+[ -n "${FLARUM_ADMIN_EMAIL:-}" ] || setenv FLARUM_ADMIN_EMAIL "admin@${host}"
 [ -n "${FLARUM_FORUM_TITLE:-}" ] || setenv FLARUM_FORUM_TITLE "Flarum"
 
 if [ "${SIDECAR_CRON:-0}" != "1" ] && pw="${FLARUM_ADMIN_PASSWORD:-}" && [ "${#pw}" -lt 8 ]; then
